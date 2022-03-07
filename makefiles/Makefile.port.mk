@@ -7,14 +7,12 @@ ifeq ($(OS),Windows_NT)
 OS = Windows
 endif
 ifeq ($(OS),Windows)
-  SYSTEM = win
+  PLATFORM=WIN64
   SHELL = cmd.exe
-else
-  SYSTEM = unix
 endif
 
 # Unix specific part.
-ifeq ($(SYSTEM),unix)
+ifneq ($(PLATFORM),WIN64)
   OR_TOOLS_TOP ?= $(shell pwd)
   OS = $(shell uname -s)
   PYTHON_VERSION ?= $(shell python3 -c "from sys import version_info as v; print (str(v[0]) + '.' + str(v[1]))")
@@ -97,7 +95,6 @@ ifeq ($(SYSTEM),unix)
 
   # Compilation flags
   DEBUG = -O4 -DNDEBUG
-  JNIDEBUG = -O1 -DNDEBUG
 
   ifeq ($(OS),Linux)
     PLATFORM = LINUX
@@ -121,7 +118,6 @@ ifeq ($(SYSTEM),unix)
     endif
 
     SYS_LNK = -lrt -lpthread -Wl,--no-as-needed -ldl
-    JNI_LIB_EXT = so
 
     PRE_LIB = -L$(OR_ROOT_FULL)/lib64 -L$(OR_ROOT_FULL)/lib -l
     POST_LIB =
@@ -201,14 +197,7 @@ ifeq ($(SYSTEM),unix)
     endif
     SYS_LNK =
     SET_COMPILER = CXX="$(CCC)"
-    SET_COIN_OPT = OPT_CXXFLAGS="-O1 -DNDEBUG" OPT_CFLAGS="-O1 -DNDEBUG"
-    JNI_LIB_EXT = dylib
 
-    LINK_CMD = $(CXX) -dynamiclib $(MAC_VERSION) \
-  -Wl,-search_paths_first \
-  -Wl,-headerpad_max_install_names \
-  -current_version $(OR_TOOLS_MAJOR).$(OR_TOOLS_MINOR) \
-  -compatibility_version $(OR_TOOLS_MAJOR).$(OR_TOOLS_MINOR)
     PRE_LIB = -L$(OR_ROOT)lib -l
     POST_LIB =
     LINK_FLAGS = \
@@ -225,7 +214,6 @@ ifeq ($(SYSTEM),unix)
   $(GLPK_INC) $(CPLEX_INC) $(XPRESS_INC)
 
   CFLAGS = $(DEBUG) $(DEPENDENCIES_INC) -DOR_TOOLS_MAJOR=$(OR_TOOLS_MAJOR) -DOR_TOOLS_MINOR=$(OR_TOOLS_MINOR) -DOR_TOOLS_PATCH=$(GIT_REVISION)
-  JNIFLAGS = $(JNIDEBUG) $(DEPENDENCIES_INC)
   LDFLAGS += $(ZLIB_LNK) $(SYS_LNK) $(LINK_FLAGS)
   DEPENDENCIES_LNK = $(GLPK_LNK) $(CPLEX_LNK) $(XPRESS_LNK)
 
@@ -261,12 +249,10 @@ ifeq ($(SYSTEM),unix)
   ifndef DOTNET_BIN
   HAS_DOTNET=OFF
   endif
-endif # ($(SYSTEM),unix)
+endif # !($(PLATFORM),WIN64)
 
 # Windows specific part.
-ifeq ("$(SYSTEM)","win")
-  PLATFORM = WIN64
-
+ifeq ("$(PLATFORM)","WIN64")
   # Check 64 bit.
   ifneq ("$(Platform)","x64")  # Visual Studio 2019/2022 64 bit
     $(warning "Only 64 bit compilation is supported")
@@ -307,12 +293,9 @@ ifeq ("$(SYSTEM)","win")
   PRE_LIB = $(OR_ROOT)lib\\
   POST_LIB = .lib
   LIB_SUFFIX = lib
-  JNI_LIB_EXT = dll
   STATIC_PRE_LIB = $(OR_ROOT)lib\\
   STATIC_POST_LIB = .lib
   STATIC_LIB_SUFFIX = lib
-  LINK_CMD = lib
-  STATIC_LINK_CMD = lib
   # C++ relevant directory
   BUILD_DIR = $(OR_ROOT)dependencies
   INC_DIR = $(OR_ROOT)include
@@ -413,7 +396,6 @@ ifeq ("$(SYSTEM)","win")
   /DUSE_GLOP /DUSE_BOP /DUSE_PDLP $(GLPK_INC) $(CPLEX_INC) $(XPRESS_INC)
 
   CFLAGS = $(DEBUG) $(DEPENDENCIES_INC)  /DOR_TOOLS_MAJOR=$(OR_TOOLS_MAJOR) /DOR_TOOLS_MINOR=$(OR_TOOLS_MINOR) /DOR_TOOLS_PATCH=$(GIT_REVISION)
-  JNIFLAGS=$(CFLAGS) $(DEPENDENCIES_INC)
   LDFLAGS =
   DEPENDENCIES_LNK += $(PRE_LIB)libprotobuf.lib $(PRE_LIB)re2.lib $(PRE_LIB)zlib.lib
   ifneq ($(USE_COINOR),OFF)
@@ -534,7 +516,7 @@ ifeq ("$(SYSTEM)","win")
   ifndef DOTNET_BIN
   HAS_DOTNET=OFF
   endif
-endif  # ($(SYSTEM),win)
+endif  # ($(PLATFORM),WIN64)
 
 # Get github revision level
 ifneq ($(wildcard .git),)
@@ -567,7 +549,6 @@ BUILD_DOTNET ?= OFF
 .PHONY: detect_port # Show variables used to build OR-Tools.
 detect_port:
 	@echo Relevant info on the system:
-	@echo SYSTEM = $(SYSTEM)
 	@echo OS = $(OS)
 	@echo PLATFORM = $(PLATFORM)
 	@echo PORT = $(PORT)
