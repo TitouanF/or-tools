@@ -49,13 +49,9 @@ SUFFIXES =
 # Read version.
 include $(OR_ROOT)Version.txt
 
-# We try to detect the platform.
+# We try to detect the platform, and load system specific macros.
 include $(OR_ROOT)makefiles/Makefile.port.mk
 OR_ROOT_FULL=$(OR_TOOLS_TOP)
-
-# Change the file extensions to increase diff tool friendliness.
-# Then include specific system commands and definitions
-include $(OR_ROOT)makefiles/Makefile.$(SYSTEM).mk
 
 # Rules to fetch and build third party dependencies.
 include $(OR_ROOT)makefiles/Makefile.third_party.mk
