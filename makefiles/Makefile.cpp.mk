@@ -209,7 +209,7 @@ $(OBJ_DIR)/sat_runner.$O: \
  $(CC_EX_DIR)/sat_runner.cc \
  $(CC_EX_DIR)/opb_reader.h \
  $(CC_EX_DIR)/sat_cnf_reader.h \
- $(SAT_DEPS) | $(OBJ_DIR)
+ cc | $(OBJ_DIR)
 	$(CCC) $(CFLAGS) -I$(SRC_DIR) -c $(CC_EX_PATH)$Ssat_runner.cc $(OBJ_OUT)$(OBJ_DIR)$Ssat_runner.$O
 
 ##################
