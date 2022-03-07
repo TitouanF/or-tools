@@ -11,7 +11,7 @@ else
 endif
 
 
-ifeq ($(BUILD_JAVA),OFF)
+ifeq ($(HAS_JAVA),OFF)
 java_runtime: java
 java:
 	@echo JAVA_HOME = $(JAVA_HOME)
@@ -27,7 +27,7 @@ check_java: java
 test_java: java
 package_java: java
 
-else  # BUILD_JAVA=ON
+else  # HAS_JAVA=ON
 
 JAVA_BUILD_DIR = $(BUILD_DIR)$Sjava
 TEMP_JAVA_DIR = temp_java
@@ -38,7 +38,11 @@ JAVA_ORTOOLS_PACKAGE := com.google.ortools
 .PHONY: java # Build Java OR-Tools.
 .PHONY: test_java # Test Java OR-Tools using various examples.
 .PHONY: package_java # Create jar OR-Tools Maven package.
-java: cc
+
+# OR Tools unique library.
+java:
+	$(MAKE) third_party BUILD_JAVA=ON
+	cmake --build dependencies --target install --config $(BUILD_TYPE) -j $(JOBS) -v
 
 # Detect RuntimeIDentifier
 ifeq ($(OS),Windows)
@@ -460,7 +464,7 @@ else
 endif
 	-$(DELREC) $(TEMP_JAVA_DIR)$Sortools_examples
 
-endif  # BUILD_JAVA=ON
+endif  # HAS_JAVA=ON
 
 ################
 ##  Cleaning  ##
@@ -491,6 +495,7 @@ clean_java:
 detect_java:
 	@echo Relevant info for the Java build:
 	@echo BUILD_JAVA = $(BUILD_JAVA)
+	@echo HAS_JAVA = $(HAS_JAVA)
 	@echo JAVA_HOME = $(JAVA_HOME)
 	@echo JAVAC_BIN = $(JAVAC_BIN)
 	@echo CLASS_DIR = $(CLASS_DIR)

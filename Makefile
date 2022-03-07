@@ -58,7 +58,7 @@ OR_ROOT_FULL=$(OR_TOOLS_TOP)
 include $(OR_ROOT)makefiles/Makefile.$(SYSTEM).mk
 
 # Rules to fetch and build third party dependencies.
-include $(OR_ROOT)makefiles/Makefile.third_party.$(SYSTEM).mk
+include $(OR_ROOT)makefiles/Makefile.third_party.mk
 
 # Check SOURCE argument
 SOURCE_SUFFIX = $(suffix $(SOURCE))
@@ -119,8 +119,11 @@ endif
 .PHONY: help_all
 help_all: help_usage help_third_party help_cc help_python help_java help_dotnet help_archive help_doc
 
+# OR Tools unique library.
 .PHONY: build_all
-build_all: cc python java dotnet
+build_all: 
+	$(MAKE) third_party BUILD_PYTHON=ON BUILD_JAVA=ON BUILD_DOTNET=ON
+	cmake --build dependencies --target install --config $(BUILD_TYPE) -j $(JOBS) -v
 	@echo Or-tools has been built for "$(BUILT_LANGUAGES)"
 
 .PHONY: check_all

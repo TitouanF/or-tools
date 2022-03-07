@@ -18,6 +18,7 @@ ifeq ($(SYSTEM),unix)
   OR_TOOLS_TOP ?= $(shell pwd)
   OS = $(shell uname -s)
   PYTHON_VERSION ?= $(shell python3 -c "from sys import version_info as v; print (str(v[0]) + '.' + str(v[1]))")
+  CMAKE_PLATFORM = "Unix Makefiles"
 
   ifeq ($(OS),Linux)
     PLATFORM = LINUX
@@ -192,6 +193,10 @@ endif
 INSTALL_DIR = or-tools_$(PORT)_v$(OR_TOOLS_VERSION)
 FZ_INSTALL_DIR = or-tools_flatzinc_$(PORT)_v$(OR_TOOLS_VERSION)
 DATA_INSTALL_DIR = or-tools_data_v$(OR_TOOLS_VERSION)
+
+BUILD_PYTHON ?= OFF
+BUILD_JAVA ?= OFF
+BUILD_DOTNET ?= OFF
 
 .PHONY: detect_port # Show variables used to build OR-Tools.
 detect_port:

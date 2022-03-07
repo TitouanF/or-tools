@@ -212,38 +212,38 @@ OR_TOOLS_LDFLAGS =
 
 # language targets
 
-BUILD_PYTHON ?= ON
+HAS_PYTHON ?= ON
 ifeq ($(PYTHON_VERSION),)
-BUILD_PYTHON = OFF
+HAS_PYTHON = OFF
 endif
 
-BUILD_JAVA ?= ON
+HAS_JAVA ?= ON
 JAVAC_BIN=$(shell $(WHICH) "$(JAVA_HOME)\bin\javac")
 JAVA_BIN=$(shell $(WHICH) "$(JAVA_HOME)\bin\java")
 JAR_BIN=$(shell $(WHICH) "$(JAVA_HOME)\bin\jar")
 MVN_BIN := $(shell $(WHICH) mvn.cmd)
 ifndef JAVAC_BIN
-BUILD_JAVA = OFF
+HAS_JAVA = OFF
 endif
 ifndef JAR_BIN
-BUILD_JAVA = OFF
+HAS_JAVA = OFF
 endif
 ifndef JAVA_BIN
-BUILD_JAVA = OFF
+HAS_JAVA = OFF
 endif
 ifndef MVN_BIN
-BUILD_JAVA = OFF
+HAS_JAVA = OFF
 endif
 
-BUILD_DOTNET ?= ON
+HAS_DOTNET ?= ON
 DOTNET_BIN := $(shell $(WHICH) dotnet 2> NUL)
 ifndef DOTNET_BIN
-BUILD_DOTNET=OFF
+HAS_DOTNET=OFF
 endif
 
 .PHONY detect_languages:
 detect_languages:
-	@echo BUILD_PYTHON = $(BUILD_PYTHON)
-	@echo BUILD_JAVA = $(BUILD_JAVA)
-	@echo BUILD_DOTNET = $(BUILD_DOTNET)
+	@echo HAS_PYTHON = $(HAS_PYTHON)
+	@echo HAS_JAVA = $(HAS_JAVA)
+	@echo HAS_DOTNET = $(HAS_DOTNET)
 

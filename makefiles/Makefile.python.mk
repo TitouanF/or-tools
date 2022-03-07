@@ -11,7 +11,7 @@ else
 endif
 
 
-ifeq ($(BUILD_PYTHON),OFF)
+ifeq ($(HAS_PYTHON),OFF)
 python:
 	$(warning Either Python support was turned off, or the python3 binary was not found.)
 
@@ -19,7 +19,7 @@ test_python: python
 package_python: python
 check_python: python
 
-else  # BUILD_PYTHON=ON
+else  # HAS_PYTHON=ON
 
 PYTHON_BUILD_DIR = $(BUILD_DIR)$Spython
 
@@ -30,7 +30,11 @@ PYTHON_BUILD_DIR = $(BUILD_DIR)$Spython
 .PHONY: package_python # Create Python ortools Wheel package.
 .PHONY: test_package_python # Test Python "ortools" Wheel package
 .PHONY: install_python # Install Python OR-Tools on the host system
-python: cc
+
+# OR Tools unique library.
+python: 
+	$(MAKE) third_party BUILD_PYTHON=ON
+	cmake --build dependencies --target install --config $(BUILD_TYPE) -j $(JOBS) -v
 
 ifeq ($(SYSTEM),win)
 PYTHON_EXECUTABLE := $(PYTHON_BUILD_DIR)\\venv\\Scripts\\python
@@ -632,7 +636,7 @@ else
 endif
 	-$(DELREC) $(TEMP_PYTHON_DIR)$Sortools_examples
 
-endif  # BUILD_PYTHON=ON
+endif  # HAS_PYTHON=ON
 
 ################
 ##  Cleaning  ##
@@ -713,6 +717,7 @@ clean_python:
 detect_python:
 	@echo Relevant info for the Python build:
 	@echo BUILD_PYTHON = $(BUILD_PYTHON)
+	@echo HAS_PYTHON = $(HAS_PYTHON)
 	@echo PYTHON_EXECUTABLE = "$(PYTHON_EXECUTABLE)"
 	@echo PYTHON_VERSION = $(PYTHON_VERSION)
 ifeq ($(SYSTEM),win)

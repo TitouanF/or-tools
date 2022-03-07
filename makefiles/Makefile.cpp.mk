@@ -37,18 +37,10 @@ JOBS ?= 4
 .PHONY: fz # Build Flatzinc.
 .PHONY: test_fz # Run all Flatzinc test targets.
 
-ortools_libs: cc
-ortools-libs: cc
-or_tools_libs: cc
-or-tools-libs: cc
-
 # OR Tools unique library.
-$(LIB_DIR)/build_timestamp: $(THIRD_PARTY_TARGET)
+cc: 
+	$(MAKE) third_party
 	cmake --build dependencies --target install --config $(BUILD_TYPE) -j $(JOBS) -v
-	$(TOUCH) $(LIB_DIR)$Sbuild_timestamp
-
-compile_libraries: $(LIB_DIR)/build_timestamp
-cc: $(LIB_DIR)/build_timestamp
 
 test_cc: \
  cc \
@@ -63,8 +55,6 @@ test_fz: \
  cc \
  rfz_golomb \
  rfz_alpha
-
-
 
 $(GEN_DIR):
 	-$(MKDIR_P) $(GEN_PATH)
