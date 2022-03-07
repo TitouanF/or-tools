@@ -198,8 +198,6 @@ $(OBJ_DIR)/util: | $(OBJ_DIR)
 $(OBJ_DIR)/swig: | $(OBJ_DIR)
 	-$(MKDIR_P) $(OBJ_DIR)$Sswig
 
-include $(OR_ROOT)makefiles/Makefile.gen.mk
-
 ##################
 ##  Sat solver  ##
 ##################
