@@ -184,10 +184,6 @@ ifeq ($(SYSTEM),unix)
     MAC_VERSION = -mmacosx-version-min=$(MAC_MIN_VERSION)
     CXX ?= clang++
     CCC = $(CXX) -fPIC -std=c++20  $(MAC_VERSION) -stdlib=libc++
-  -Wl,-search_paths_first \
-  -Wl,-headerpad_max_install_names \
-  -current_version $(OR_TOOLS_MAJOR).$(OR_TOOLS_MINOR) \
-  -compatibility_version $(OR_TOOLS_MAJOR).$(OR_TOOLS_MINOR)
     L = dylib
 
     ZLIB_LNK = -lz
