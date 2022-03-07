@@ -20,39 +20,6 @@ ifneq ($(PLATFORM),WIN64)
 
   # Unix specific definitions
   LIB_PREFIX = lib
-  DEP_BIN_DIR = $(OR_ROOT)bin
-  # C++ relevant directory
-  BUILD_DIR = $(OR_ROOT)dependencies
-  INC_DIR = $(OR_ROOT)include
-  SRC_DIR = $(OR_ROOT).
-  GEN_DIR = $(OR_ROOT)ortools/gen
-  GEN_PATH = $(subst /,$S,$(GEN_DIR))
-  OBJ_DIR = $(OR_ROOT)objs
-  LIB_DIR = $(OR_ROOT)lib
-  BIN_DIR = $(OR_ROOT)bin
-  FZ_EX_DIR  = $(OR_ROOT)examples/flatzinc
-  FZ_EX_PATH = $(subst /,$S,$(FZ_EX_DIR))
-  # C++ relevant directory
-  CC_EX_DIR  = $(OR_ROOT)examples/cpp
-  CC_GEN_DIR  = $(GEN_DIR)/examples/cpp
-  CC_EX_PATH = $(subst /,$S,$(CC_EX_DIR))
-  CC_GEN_PATH = $(subst /,$S,$(CC_GEN_DIR))
-  # Python relevant directory
-  PYTHON_EX_DIR  = $(OR_ROOT)examples/python
-  PYTHON_EX_PATH = $(subst /,$S,$(PYTHON_EX_DIR))
-  # Java relevant directory
-  CLASS_DIR = $(OR_ROOT)classes
-  JAVA_EX_DIR  = $(OR_ROOT)examples/java
-  JAVA_EX_PATH = $(subst /,$S,$(JAVA_EX_DIR))
-  # .Net relevant directory
-  DOTNET_EX_DIR  = $(OR_ROOT)examples/dotnet
-  DOTNET_EX_PATH = $(subst /,$S,$(DOTNET_EX_DIR))
-  # Contrib examples directory
-  CONTRIB_EX_DIR = $(OR_ROOT)examples/contrib
-  CONTRIB_EX_PATH = $(subst /,$S,$(CONTRIB_EX_DIR))
-  # Test examples directory
-  TEST_DIR  = $(OR_ROOT)examples/tests
-  TEST_PATH = $(subst /,$S,$(TEST_DIR))
 
   O = o
   E =
@@ -65,8 +32,6 @@ ifneq ($(PLATFORM),WIN64)
   OBJ_OUT = -o # need the space
   EXE_OUT = -o # need the space
   S = /
-  CMDSEP = ;
-  CPSEP = :
 
   COPY = cp
   COPYREC = cp -R
@@ -204,7 +169,7 @@ ifneq ($(PLATFORM),WIN64)
   -framework CoreFoundation \
   -Wl,-rpath,@loader_path \
   -Wl,-rpath,@loader_path/../lib \
-  -Wl,-rpath,@loader_path/../dependencies/install/lib
+  -Wl,-rpath,@loader_path/../dependencies/lib
     LDFLAGS = -install_name @rpath/$(LIB_PREFIX)ortools.$L #  endif # ($(OS),Darwin)
 
   endif # ($(OS),Darwin)
@@ -216,9 +181,7 @@ ifneq ($(PLATFORM),WIN64)
   CFLAGS = $(DEBUG) $(DEPENDENCIES_INC) -DOR_TOOLS_MAJOR=$(OR_TOOLS_MAJOR) -DOR_TOOLS_MINOR=$(OR_TOOLS_MINOR) -DOR_TOOLS_PATCH=$(GIT_REVISION)
   LDFLAGS += $(ZLIB_LNK) $(SYS_LNK) $(LINK_FLAGS)
   DEPENDENCIES_LNK = $(GLPK_LNK) $(CPLEX_LNK) $(XPRESS_LNK)
-
   OR_TOOLS_LNK = $(PRE_LIB)ortools$(POST_LIB)
-  OR_TOOLS_LDFLAGS = $(ZLIB_LNK) $(SYS_LNK) $(LINK_FLAGS)
 
   # language targets
   HAS_PYTHON ?= ON
@@ -296,38 +259,6 @@ ifeq ("$(PLATFORM)","WIN64")
   STATIC_PRE_LIB = $(OR_ROOT)lib\\
   STATIC_POST_LIB = .lib
   STATIC_LIB_SUFFIX = lib
-  # C++ relevant directory
-  BUILD_DIR = $(OR_ROOT)dependencies
-  INC_DIR = $(OR_ROOT)include
-  SRC_DIR = $(OR_ROOT).
-  GEN_DIR = $(OR_ROOT)ortools/gen
-  GEN_PATH = $(subst /,$S,$(GEN_DIR))
-  OBJ_DIR = $(OR_ROOT)objs
-  LIB_DIR = $(OR_ROOT)lib
-  BIN_DIR = $(OR_ROOT)bin
-  FZ_EX_DIR  = $(OR_ROOT)examples/flatzinc
-  FZ_EX_PATH = $(subst /,$S,$(FZ_EX_DIR))
-  # C++ relevant directory
-  CC_EX_DIR  = $(OR_ROOT)examples/cpp
-  CC_GEN_DIR  = $(GEN_DIR)/examples/cpp
-  CC_EX_PATH = $(subst /,$S,$(CC_EX_DIR))
-  CC_GEN_PATH = $(subst /,$S,$(CC_GEN_DIR))
-  # Python relevant directory
-  PYTHON_EX_DIR  = $(OR_ROOT)examples/python
-  PYTHON_EX_PATH = $(subst /,$S,$(PYTHON_EX_DIR))
-  # Java relevant directory
-  CLASS_DIR = $(OR_ROOT)classes
-  JAVA_EX_DIR  = $(OR_ROOT)examples/java
-  JAVA_EX_PATH = $(subst /,$S,$(JAVA_EX_DIR))
-  # .Net relevant directory
-  DOTNET_EX_DIR  = $(OR_ROOT)examples/dotnet
-  DOTNET_EX_PATH = $(subst /,$S,$(DOTNET_EX_DIR))
-  # Contrib examples directory
-  CONTRIB_EX_DIR = $(OR_ROOT)examples/contrib
-  CONTRIB_EX_PATH = $(subst /,$S,$(CONTRIB_EX_DIR))
-  # Test examples directory
-  TEST_DIR  = $(OR_ROOT)examples/tests
-  TEST_PATH = $(subst /,$S,$(TEST_DIR))
 
   O = obj
   L = lib
@@ -341,8 +272,6 @@ ifeq ("$(PLATFORM)","WIN64")
   OBJ_OUT = /Fo
   EXE_OUT = /Fe
   S = \\
-  CMDSEP = &
-  CPSEP = ;
 
   COPY = copy
   COPYREC = xcopy
@@ -364,11 +293,6 @@ ifeq ("$(PLATFORM)","WIN64")
   ifeq ($(CMAKE),)
   $(error Please add "cmake" to your PATH)
   endif
-
-
-  # Add some additional macros
-  ATTRIB = attrib
-  TASKKILL = taskkill
 
   # Compilation macros.
   DEBUG=/O2 -DNDEBUG
@@ -484,7 +408,6 @@ ifeq ("$(PLATFORM)","WIN64")
   DEPENDENCIES_LNK += $(ABSL_LNK) $(COINOR_LNK) $(SCIP_LNK) $(SYS_LNK) $(GLPK_LNK) $(CPLEX_LNK) $(XPRESS_LNK)
 
   OR_TOOLS_LNK = $(PRE_LIB)ortools$(POST_LIB) $(DEPENDENCIES_LNK)
-  OR_TOOLS_LDFLAGS =
 
   # language targets
 
@@ -517,6 +440,44 @@ ifeq ("$(PLATFORM)","WIN64")
   HAS_DOTNET=OFF
   endif
 endif  # ($(PLATFORM),WIN64)
+
+# C++ relevant directory
+BUILD_DIR = $(OR_ROOT)dependencies
+INC_DIR = $(OR_ROOT)include
+SRC_DIR = $(OR_ROOT).
+GEN_DIR = $(OR_ROOT)ortools/gen
+GEN_PATH = $(subst /,$S,$(GEN_DIR))
+OBJ_DIR = $(OR_ROOT)objs
+LIB_DIR = $(OR_ROOT)lib
+BIN_DIR = $(OR_ROOT)bin
+FZ_EX_DIR  = $(OR_ROOT)examples/flatzinc
+FZ_EX_PATH = $(subst /,$S,$(FZ_EX_DIR))
+
+# C++ examples relevant directory
+CC_EX_DIR  = $(OR_ROOT)examples/cpp
+CC_GEN_DIR  = $(GEN_DIR)/examples/cpp
+CC_EX_PATH = $(subst /,$S,$(CC_EX_DIR))
+CC_GEN_PATH = $(subst /,$S,$(CC_GEN_DIR))
+
+# Python relevant directory
+PYTHON_EX_DIR  = $(OR_ROOT)examples/python
+PYTHON_EX_PATH = $(subst /,$S,$(PYTHON_EX_DIR))
+
+# Java relevant directory
+JAVA_EX_DIR  = $(OR_ROOT)examples/java
+JAVA_EX_PATH = $(subst /,$S,$(JAVA_EX_DIR))
+
+# .Net relevant directory
+DOTNET_EX_DIR  = $(OR_ROOT)examples/dotnet
+DOTNET_EX_PATH = $(subst /,$S,$(DOTNET_EX_DIR))
+
+# Contrib examples directory
+CONTRIB_EX_DIR = $(OR_ROOT)examples/contrib
+CONTRIB_EX_PATH = $(subst /,$S,$(CONTRIB_EX_DIR))
+
+# Test examples directory
+TEST_DIR  = $(OR_ROOT)examples/tests
+TEST_PATH = $(subst /,$S,$(TEST_DIR))
 
 # Get github revision level
 ifneq ($(wildcard .git),)

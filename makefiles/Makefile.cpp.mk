@@ -222,7 +222,7 @@ $(OBJ_DIR)/$(SOURCE_NAME).$O: $(SOURCE) cc | $(OBJ_DIR)
 $(BIN_DIR)/$(SOURCE_NAME)$E: $(OBJ_DIR)/$(SOURCE_NAME).$O cc | $(BIN_DIR)
 	$(CCC) $(CFLAGS) \
  $(OBJ_DIR)$S$(SOURCE_NAME).$O \
- $(OR_TOOLS_LNK) $(OR_TOOLS_LDFLAGS) \
+ $(OR_TOOLS_LNK) $(LDFLAGS) \
  $(EXE_OUT)$(BIN_DIR)$S$(SOURCE_NAME)$E
 
 .PHONY: build # Build a C++ program.
@@ -265,7 +265,7 @@ $(OBJ_DIR)/%.$O: ortools/routing/samples/%.cc cc | $(OBJ_DIR)
 	$(CCC) $(CFLAGS) -c ortools$Srouting$Ssamples$S$*.cc $(OBJ_OUT)$(OBJ_DIR)$S$*.$O
 
 $(BIN_DIR)/%$E: $(OBJ_DIR)/%.$O cc | $(BIN_DIR)
-	$(CCC) $(CFLAGS) $(OBJ_DIR)$S$*.$O $(OR_TOOLS_LNK) $(OR_TOOLS_LDFLAGS) $(EXE_OUT)$(BIN_DIR)$S$*$E
+	$(CCC) $(CFLAGS) $(OBJ_DIR)$S$*.$O $(OR_TOOLS_LNK) $(LDFLAGS) $(EXE_OUT)$(BIN_DIR)$S$*$E
 
 rcc_%: $(BIN_DIR)/%$E FORCE
 	$(BIN_DIR)$S$*$E $(ARGS)
@@ -295,7 +295,7 @@ $(OBJ_DIR)/course_scheduling.pb.$O: $(CC_GEN_DIR)/course_scheduling.pb.cc $(CC_G
 	$(CCC) $(CFLAGS) -c $(CC_GEN_PATH)$Scourse_scheduling.pb.cc $(OBJ_OUT)$(OBJ_DIR)$Scourse_scheduling.pb.$O
 
 $(BIN_DIR)/course_scheduling$E: $(OBJ_DIR)/course_scheduling.$O $(OBJ_DIR)/course_scheduling_run.$O $(OBJ_DIR)/course_scheduling.pb.$O cc | $(BIN_DIR)
-	$(CCC) $(CFLAGS) $(OBJ_DIR)$Scourse_scheduling.$O $(OBJ_DIR)$Scourse_scheduling_run.$O $(OBJ_DIR)$Scourse_scheduling.pb.$O $(OR_TOOLS_LNK) $(OR_TOOLS_LDFLAGS) $(EXE_OUT)$(BIN_DIR)$Scourse_scheduling$E
+	$(CCC) $(CFLAGS) $(OBJ_DIR)$Scourse_scheduling.$O $(OBJ_DIR)$Scourse_scheduling_run.$O $(OBJ_DIR)$Scourse_scheduling.pb.$O $(OR_TOOLS_LNK) $(LDFLAGS) $(EXE_OUT)$(BIN_DIR)$Scourse_scheduling$E
 
 rcc_course_scheduling: $(BIN_DIR)/course_scheduling$E FORCE
 	$(BIN_DIR)$S$*$E $(ARGS)
@@ -607,10 +607,10 @@ clean_cc:
 .PHONY: detect_cc # Show variables used to build C++ OR-Tools.
 detect_cc:
 	@echo Relevant info for the C++ build:
-	@echo PROTOC = $(PROTOC)
 	@echo CCC = $(CCC)
 	@echo CFLAGS = $(CFLAGS)
 	@echo LDFLAGS = $(LDFLAGS)
+	@echo PROTOC = $(PROTOC)
 	@echo DEPENDENCIES_INC = $(DEPENDENCIES_INC)
 	@echo DEPENDENCIES_LNK = $(DEPENDENCIES_LNK)
 	@echo SRC_DIR = $(SRC_DIR)
@@ -621,9 +621,7 @@ detect_cc:
 	@echo BIN_DIR = $(BIN_DIR)
 	@echo prefix = $(prefix)
 	@echo OR_TOOLS_LNK = $(OR_TOOLS_LNK)
-	@echo OR_TOOLS_LDFLAGS = $(OR_TOOLS_LDFLAGS)
 	@echo OR_TOOLS_LIBS = $(OR_TOOLS_LIBS)
-	@echo Relevant info on third party:
 	@echo BUILD_TYPE = $(BUILD_TYPE)
 	@echo USE_GLOP = ON
 	@echo USE_PDLP = ON

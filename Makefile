@@ -86,7 +86,7 @@ include $(OR_ROOT)makefiles/Makefile.python.mk
 include $(OR_ROOT)makefiles/Makefile.java.mk
 include $(OR_ROOT)makefiles/Makefile.dotnet.mk
 include $(OR_ROOT)makefiles/Makefile.archive.mk
-ifeq ($(SYSTEM),unix)
+ifneq ($(PLATFORM),WIN64)
 include $(OR_ROOT)makefiles/Makefile.doc.mk
 else
 # Remove some rules on windows
@@ -103,7 +103,7 @@ help_usage:
 	@echo test, test_all:	Test OR-Tools for all available languages.
 	@echo clean, clean_all:	Clean output from previous build for all available languages \(won\'t clean third party\).
 	@echo detect, detect_all:	Show variables used to build OR-Tools for all available languages.
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@echo off & echo(
 else
 	@echo
@@ -140,7 +140,7 @@ detect_all: detect_port detect_cc detect_python detect_java detect_dotnet detect
 	@echo SOURCE_PATH = $(SOURCE_PATH)
 	@echo SOURCE_NAME = $(SOURCE_NAME)
 	@echo SOURCE_SUFFIX = $(SOURCE_SUFFIX)
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@echo off & echo(
 else
 	@echo
