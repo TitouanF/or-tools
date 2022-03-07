@@ -18,6 +18,37 @@ else
   prefix ?= /usr/local
 endif
 
+# Checks if the user has overwritten default libraries and binaries.
+BUILD_TYPE ?= Release
+USE_COINOR ?= ON
+USE_SCIP ?= ON
+USE_GLPK ?= OFF
+USE_CPLEX ?= OFF
+USE_XPRESS ?= OFF
+PROTOC ?= $(OR_TOOLS_TOP)$Sbin$Sprotoc
+
+# Main target.
+.PHONY: third_party # Build OR-Tools Prerequisite
+
+GENERATOR ?= $(CMAKE_PLATFORM)
+
+third_party:
+	cmake -S . -B $(BUILD_DIR) -DBUILD_DEPS=ON \
+ -DBUILD_DOTNET=$(BUILD_DOTNET) \
+ -DBUILD_JAVA=$(BUILD_JAVA) \
+ -DBUILD_PYTHON=$(BUILD_PYTHON) \
+ -DBUILD_EXAMPLES=OFF \
+ -DBUILD_SAMPLES=OFF \
+ -DUSE_COINOR=$(USE_COINOR) \
+ -DUSE_SCIP=$(USE_SCIP) \
+ -DUSE_GLPK=$(USE_GLPK) \
+ -DUSE_CPLEX=$(USE_CPLEX) \
+ -DUSE_XPRESS=$(USE_XPRESS) \
+ -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+ -DCMAKE_INSTALL_PREFIX=$(OR_ROOT_FULL) \
+ $(CMAKE_ARGS) \
+ -G $(GENERATOR)
+
 # All libraries and dependecies
 ifeq ($(PLATFORM),WIN64)
 OR_TOOLS_LIBS = $(LIB_DIR)/$(LIB_PREFIX)ortools.$L
@@ -563,25 +594,12 @@ CC_TESTS := $(addsuffix $E, $(addprefix $(BIN_DIR)$S, $(basename $(CC_TESTS))))
 
 .PHONY: clean_cc # Clean C++ output from previous build.
 clean_cc:
-	-$(DEL) $(LIB_DIR)$Sbuild_timestamp
-	-$(DEL) $(LIB_DIR)*$S$(LIB_PREFIX)cvrptw_lib.$L
-	-$(DEL) $(LIB_DIR)*$S$(LIB_PREFIX)dimacs.$L
-	-$(DEL) $(LIB_DIR)*$S$(LIB_PREFIX)fap.$L
-	-$(DEL) $(LIB_DIR)*$S$(LIB_PREFIX)fz.$L
-	-$(DEL) $(LIB_DIR)*$S$(LIB_PREFIX)ortools*.$L*
-	-$(DEL) $(LIB_DIR)*$S$(LIB_PREFIX)flatzinc*.$L*
-	-$(DEL) $(LIB_DIR)*$S$(LIB_PREFIX)*.a
-	-$(DEL) $(OBJ_DIR)$S*.$O
-	-$(DELREC) $(OBJ_DIR)
-	-$(DEL) $(BIN_DIR)$Sortools.msc
-	-$(DEL) $(BIN_DIR)$Sfz$E
-	-$(DEL) $(BIN_DIR)$Sparser_main$E
-	-$(DEL) $(BIN_DIR)$Ssat_runner$E
-	-$(DEL) $(CC_SAMPLES)
-	-$(DEL) $(CC_EXAMPLES)
-	-$(DEL) $(CC_TESTS)
-	-$(DEL) $(BIN_DIR)$S*.exp
-	-$(DEL) $(BIN_DIR)$S*.lib
+	-$(DELREC) $(BUILD_DIR)
+	-$(DELREC) bin
+	-$(DELREC) include
+	-$(DELREC) share
+	-$(DELREC) lib
+	-$(DEL) cmake$Sprotobuf-*.cmake
 	-$(DELREC) $(TEMP_PACKAGE_CC_DIR)
 	-$(DELREC) $(TEMP_CC_DIR)
 
@@ -607,6 +625,24 @@ detect_cc:
 	@echo OR_TOOLS_LNK = $(OR_TOOLS_LNK)
 	@echo OR_TOOLS_LDFLAGS = $(OR_TOOLS_LDFLAGS)
 	@echo OR_TOOLS_LIBS = $(OR_TOOLS_LIBS)
+	@echo Relevant info on third party:
+	@echo BUILD_TYPE = $(BUILD_TYPE)
+	@echo USE_GLOP = ON
+	@echo USE_PDLP = ON
+	@echo USE_COINOR = $(USE_COINOR)
+	@echo USE_SCIP = $(USE_SCIP)
+	@echo USE_GLPK = $(USE_GLPK)
+	@echo USE_CPLEX = $(USE_CPLEX)
+	@echo USE_XPRESS = $(USE_XPRESS)
+ifdef GLPK_ROOT
+	@echo GLPK_ROOT = $(GLPK_ROOT)
+endif
+ifdef CPLEX_ROOT
+	@echo CPLEX_ROOT = $(CPLEX_ROOT)
+endif
+ifdef XPRESS_ROOT
+	@echo XPRESS_ROOT = $(XPRESS_ROOT)
+endif
 ifeq ($(PLATFORM),WIN64)
 	@echo off & echo(
 else
