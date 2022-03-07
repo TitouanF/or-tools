@@ -2,7 +2,7 @@
 .PHONY: help_java # Generate list of Java targets with descriptions.
 help_java:
 	@echo Use one of the following Java targets:
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@$(GREP) "^.PHONY: .* #" $(CURDIR)/makefiles/Makefile.java.mk | $(SED) "s/\.PHONY: \(.*\) # \(.*\)/\1\t\2/"
 	@echo off & echo(
 else
@@ -451,7 +451,7 @@ java_examples_archive: \
  | $(TEMP_JAVA_DIR)/ortools_examples/examples/java
 	$(COPY) tools$SREADME.java.md $(TEMP_JAVA_DIR)$Sortools_examples$SREADME.md
 	$(COPY) LICENSE $(TEMP_JAVA_DIR)$Sortools_examples
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	cd $(TEMP_JAVA_DIR) \
  && ..\$(ZIP) \
  -r ..\or-tools_java_examples_v$(OR_TOOLS_VERSION).zip \
@@ -505,7 +505,7 @@ detect_java:
 	@echo JAVA_ORTOOLS_PACKAGE = $(JAVA_ORTOOLS_PACKAGE)
 	@echo JAVA_ORTOOLS_NATIVE_PROJECT = $(JAVA_ORTOOLS_NATIVE_PROJECT)
 	@echo JAVA_ORTOOLS_PROJECT = $(JAVA_ORTOOLS_PROJECT)
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@echo off & echo(
 else
 	@echo

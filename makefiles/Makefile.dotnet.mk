@@ -2,7 +2,7 @@
 .PHONY: help_dotnet # Generate list of dotnet targets with descriptions.
 help_dotnet:
 	@echo Use one of the following dotnet targets:
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@$(GREP) "^.PHONY: .* #" $(CURDIR)/makefiles/Makefile.dotnet.mk | $(SED) "s/\.PHONY: \(.*\) # \(.*\)/\1\t\2/"
 	@echo off & echo(
 else
@@ -538,7 +538,7 @@ dotnet_examples_archive: \
 	| $(TEMP_DOTNET_DIR)/ortools_examples/examples/dotnet
 	-$(COPY) tools$SREADME.dotnet.md $(TEMP_DOTNET_DIR)$Sortools_examples$SREADME.md
 	$(COPY) LICENSE $(TEMP_DOTNET_DIR)$Sortools_examples
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	cd $(TEMP_DOTNET_DIR) \
  && ..\$(ZIP) \
  -r ..\or-tools_dotnet_examples_v$(OR_TOOLS_VERSION).zip \
@@ -638,7 +638,7 @@ detect_dotnet:
 	@echo DOTNET_ORTOOLS_RUNTIME_NUPKG = $(DOTNET_ORTOOLS_RUNTIME_NUPKG)
 	@echo DOTNET_ORTOOLS_ASSEMBLY_NAME = $(DOTNET_ORTOOLS_ASSEMBLY_NAME)
 	@echo DOTNET_ORTOOLS_NUPKG = $(DOTNET_ORTOOLS_NUPKG)
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@echo off & echo(
 else
 	@echo

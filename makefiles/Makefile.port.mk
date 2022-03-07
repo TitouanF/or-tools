@@ -64,7 +64,6 @@ ifeq ($(SYSTEM),unix)
   EXP = .exp
   ARCHIVE_EXT = .tar.gz
   FZ_EXE = fzn-or-tools$E
-  LD_OUT = -o # need the space.
   OBJ_OUT = -o # need the space
   EXE_OUT = -o # need the space
   S = /
@@ -105,8 +104,6 @@ ifeq ($(SYSTEM),unix)
 
     CXX ?= g++
     CCC = $(CXX) -fPIC -std=c++20 -fwrapv
-    DYNAMIC_LD = $(CXX) -shared
-    DYNAMIC_LDFLAGS = -Wl,-rpath,\"\\\$$\$$ORIGIN\"
     L = so
 
     # This is needed to find libz.a
@@ -126,7 +123,6 @@ ifeq ($(SYSTEM),unix)
     SYS_LNK = -lrt -lpthread -Wl,--no-as-needed -ldl
     JNI_LIB_EXT = so
 
-    LINK_CMD = $(DYNAMIC_LD)
     PRE_LIB = -L$(OR_ROOT_FULL)/lib64 -L$(OR_ROOT_FULL)/lib -l
     POST_LIB =
     LINK_FLAGS = \
@@ -188,13 +184,10 @@ ifeq ($(SYSTEM),unix)
     MAC_VERSION = -mmacosx-version-min=$(MAC_MIN_VERSION)
     CXX ?= clang++
     CCC = $(CXX) -fPIC -std=c++20  $(MAC_VERSION) -stdlib=libc++
-    DYNAMIC_LD = $(CXX) -dynamiclib -undefined dynamic_lookup \
-    $(MAC_VERSION) \
   -Wl,-search_paths_first \
   -Wl,-headerpad_max_install_names \
   -current_version $(OR_TOOLS_MAJOR).$(OR_TOOLS_MINOR) \
   -compatibility_version $(OR_TOOLS_MAJOR).$(OR_TOOLS_MINOR)
-    DYNAMIC_LDFLAGS = -Wl,-rpath,\"@loader_path\"
     L = dylib
 
     ZLIB_LNK = -lz
@@ -368,8 +361,6 @@ ifeq ("$(SYSTEM)","win")
   FZ_EXE = fzn-or-tools$E
   OBJ_OUT = /Fo
   EXE_OUT = /Fe
-  LD_OUT = /OUT:
-  DYNAMIC_LD = link /DLL /LTCG /debug
   S = \\
   CMDSEP = &
   CPSEP = ;
@@ -408,19 +399,16 @@ ifeq ("$(SYSTEM)","win")
   # This is needed to find GLPK include files and libraries.
   ifdef WINDOWS_GLPK_DIR
   GLPK_INC = /I"$(WINDOWS_GLPK_DIR)\\include" /DUSE_GLPK
-  DYNAMIC_GLPK_LNK = "$(WINDOWS_GLPK_DIR)\\lib\\glpk.lib"
-  STATIC_GLPK_LNK = "$(WINDOWS_GLPK_DIR)\\lib\\glpk.lib"
+  GLPK_LNK = "$(WINDOWS_GLPK_DIR)\\lib\\glpk.lib"
   endif
   # This is needed to find CPLEX include files and libraries.
   ifdef WINDOWS_CPLEX_DIR
     CPLEX_INC = /I"$(WINDOWS_CPLEX_DIR)\\cplex\\include" /DUSE_CPLEX
-    STATIC_CPLEX_LNK = "$(WINDOWS_CPLEX_DIR)\\cplex\\lib\\x64_windows_msvc14\\stat_mda\\cplex$(WINDOWS_CPLEX_VERSION).lib"
-    DYNAMIC_CPLEX_LNK = $(STATIC_CPLEX_LNK)
+    CPLEX_LNK = "$(WINDOWS_CPLEX_DIR)\\cplex\\lib\\x64_windows_msvc14\\stat_mda\\cplex$(WINDOWS_CPLEX_VERSION).lib"
   endif
   ifdef WINDOWS_XPRESS_DIR
     XPRESS_INC = /I"$(WINDOWS_XPRESS_DIR)\\include" /DUSE_XPRESS /DXPRESS_PATH=\"$(WINDOWS_XPRESS_DIR)\"
-    STATIC_XPRESS_LNK = "$(WINDOWS_XPRESS_DIR)\\lib\\xprs.lib"
-    DYNAMIC_XPRESS_LNK = $(STATIC_XPRESS_LNK)
+    XPRESS_LNK = "$(WINDOWS_XPRESS_DIR)\\lib\\xprs.lib"
   endif
 
   SYS_LNK = psapi.lib ws2_32.lib shlwapi.lib
@@ -515,7 +503,7 @@ ifeq ("$(SYSTEM)","win")
   $(PRE_LIB)absl_time.lib \
   $(PRE_LIB)absl_time_zone.lib
 
-  DEPENDENCIES_LNK += $(ABSL_LNK) $(COINOR_LNK) $(SCIP_LNK) $(SYS_LNK) $(STATIC_GLPK_LNK) $(STATIC_CPLEX_LNK) $(STATIC_XPRESS_LNK)
+  DEPENDENCIES_LNK += $(ABSL_LNK) $(COINOR_LNK) $(SCIP_LNK) $(SYS_LNK) $(GLPK_LNK) $(CPLEX_LNK) $(XPRESS_LNK)
 
   OR_TOOLS_LNK = $(PRE_LIB)ortools$(POST_LIB) $(DEPENDENCIES_LNK)
   OR_TOOLS_LDFLAGS =
@@ -550,7 +538,7 @@ ifeq ("$(SYSTEM)","win")
   ifndef DOTNET_BIN
   HAS_DOTNET=OFF
   endif
-endif # ($(SYSTEM),win)
+endif  # ($(SYSTEM),win)
 
 # Get github revision level
 ifneq ($(wildcard .git),)
@@ -597,10 +585,10 @@ detect_port:
 	@echo HAS_PYTHON = $(HAS_PYTHON)
 	@echo HAS_JAVA = $(HAS_JAVA)
 	@echo HAS_DOTNET = $(HAS_DOTNET)
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@echo CMAKE_PLATFORM = $(CMAKE_PLATFORM)
 endif
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@echo off & echo(
 else
 	@echo

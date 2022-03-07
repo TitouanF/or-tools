@@ -2,7 +2,7 @@
 .PHONY: help_python # Generate list of Python targets with descriptions.
 help_python:
 	@echo Use one of the following Python targets:
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@$(GREP) "^.PHONY: .* #" $(CURDIR)/makefiles/Makefile.python.mk | $(SED) "s/\.PHONY: \(.*\) # \(.*\)/\1\t\2/"
 	@echo off & echo(
 else
@@ -36,7 +36,7 @@ python:
 	$(MAKE) third_party BUILD_PYTHON=ON
 	cmake --build dependencies --target install --config $(BUILD_TYPE) -j $(JOBS) -v
 
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 PYTHON_EXECUTABLE := $(PYTHON_BUILD_DIR)\\venv\\Scripts\\python
 else
 PYTHON_EXECUTABLE := $(PYTHON_BUILD_DIR)/venv/bin/python
@@ -369,7 +369,7 @@ PYPI_ARCHIVE_TEMP_DIR = temp_python$(PYTHON_VERSION)
 
 # PEP 513 auditwheel repair overwrite rpath to $ORIGIN/<ortools_root>/.libs
 # We need to copy all dynamic libs here
-ifneq ($(SYSTEM),win)
+ifneq ($(PLATFORM),WIN64)
 PYPI_ARCHIVE_LIBS = $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools/.libs
 endif
 
@@ -416,7 +416,7 @@ $(PYPI_ARCHIVE_TEMP_DIR)/ortools/setup.py: tools/setup.py.in | $(PYPI_ARCHIVE_TE
 	$(SED) -i -e 's/ORTOOLS_PYTHON_VERSION/ortools$(PYPI_OS)/' $(PYPI_ARCHIVE_TEMP_DIR)$Sortools$Ssetup.py
 	$(SED) -i -e 's/VVVV/$(OR_TOOLS_PYTHON_VERSION)/' $(PYPI_ARCHIVE_TEMP_DIR)$Sortools$Ssetup.py
 	$(SED) -i -e 's/PROTOBUF_TAG/$(PROTOBUF_TAG)/' $(PYPI_ARCHIVE_TEMP_DIR)$Sortools$Ssetup.py
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	$(SED) -i -e 's/\.dll/\.pyd/' $(PYPI_ARCHIVE_TEMP_DIR)/ortools/setup.py
 	$(SED) -i -e '/DELETEWIN/d' $(PYPI_ARCHIVE_TEMP_DIR)/ortools/setup.py
 	$(SED) -i -e 's/DELETEUNIX //g' $(PYPI_ARCHIVE_TEMP_DIR)/ortools/setup.py
@@ -431,7 +431,7 @@ endif
 $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools/__init__.py: \
 	$(GEN_DIR)/ortools/__init__.py | $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools
 	$(COPY) $(GEN_PATH)$Sortools$S__init__.py $(PYPI_ARCHIVE_TEMP_DIR)$Sortools$Sortools$S__init__.py
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	echo __version__ = "$(OR_TOOLS_PYTHON_VERSION)" >> \
  $(PYPI_ARCHIVE_TEMP_DIR)$Sortools$Sortools$S__init__.py
 else
@@ -528,7 +528,7 @@ test_package_python: package_python
 	$(COPY) ortools$Sconstraint_solver$Ssamples$Stsp.py $(PYPI_ARCHIVE_TEMP_DIR)$Svenv
 	$(COPY) ortools$Sconstraint_solver$Ssamples$Svrp.py $(PYPI_ARCHIVE_TEMP_DIR)$Svenv
 	$(COPY) ortools$Sconstraint_solver$Ssamples$Scvrptw_break.py $(PYPI_ARCHIVE_TEMP_DIR)$Svenv
-ifneq ($(SYSTEM),win)
+ifneq ($(PLATFORM),WIN64)
 	$(PYPI_ARCHIVE_TEMP_DIR)/venv/bin/python -m pip install $(PYPI_ARCHIVE_TEMP_DIR)/ortools/dist/*.whl
 	$(PYPI_ARCHIVE_TEMP_DIR)/venv/bin/python -m pip install pandas matplotlibgit
 	$(PYPI_ARCHIVE_TEMP_DIR)/venv/bin/python $(PYPI_ARCHIVE_TEMP_DIR)/venv/test.py
@@ -615,7 +615,7 @@ python_examples_archive: | \
 	$(COPY) examples$Snotebook$S*.md $(TEMP_PYTHON_DIR)$Sortools_examples$Sexamples$Snotebook
 	$(COPY) tools$SREADME.python.md $(TEMP_PYTHON_DIR)$Sortools_examples$SREADME.md
 	$(COPY) LICENSE $(TEMP_PYTHON_DIR)$Sortools_examples
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	cd $(TEMP_PYTHON_DIR)\ortools_examples \
  && ..\..\$(TAR) -C ..\.. -c -v \
  --exclude *svn* --exclude *roadef* --exclude *vector_packing* \
@@ -720,7 +720,7 @@ detect_python:
 	@echo HAS_PYTHON = $(HAS_PYTHON)
 	@echo PYTHON_EXECUTABLE = "$(PYTHON_EXECUTABLE)"
 	@echo PYTHON_VERSION = $(PYTHON_VERSION)
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@echo off & echo(
 else
 	@echo

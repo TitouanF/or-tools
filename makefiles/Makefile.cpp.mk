@@ -2,7 +2,7 @@
 .PHONY: help_cc # Generate list of C++ targets with descriptions.
 help_cc:
 	@echo Use one of the following C++ targets:
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@$(GREP) "^.PHONY: .* #" $(CURDIR)/makefiles/Makefile.cpp.mk | $(SED) "s/\.PHONY: \(.*\) # \(.*\)/\1\t\2/"
 	@echo off & echo(
 else
@@ -12,7 +12,7 @@ endif
 
 # Checks if the user has overwritten default install prefix.
 # cf https://www.gnu.org/prep/standards/html_node/Directory-Variables.html#index-prefix
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
   prefix ?= C:\\Program Files\\or-tools
 else
   prefix ?= /usr/local
@@ -440,7 +440,7 @@ $(TEMP_PACKAGE_CC_DIR)/$(INSTALL_DIR): | $(TEMP_PACKAGE_CC_DIR)
 	$(MKDIR) $(TEMP_PACKAGE_CC_DIR)$S$(INSTALL_DIR)
 
 package_cc: cc | $(TEMP_PACKAGE_CC_DIR)/$(INSTALL_DIR)
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	cd $(TEMP_PACKAGE_CC_DIR)\$(INSTALL_DIR) && \
 		..\..\$(TAR) -C ..\.. -c -v include | ..\..\$(TAR) xvm
 	cd $(TEMP_PACKAGE_CC_DIR)\$(INSTALL_DIR) && \
@@ -455,7 +455,7 @@ else
 	cd $(TEMP_PACKAGE_CC_DIR)/$(INSTALL_DIR) && \
 		tar -C ../.. -c -v share | tar xvm
 endif
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	cd $(TEMP_PACKAGE_CC_DIR) && ..$S$(ZIP) -r ..$S$(INSTALL_DIR)$(ARCHIVE_EXT) $(INSTALL_DIR)
 else
 	$(TAR) -C $(TEMP_PACKAGE_CC_DIR) --no-same-owner -czvf $(INSTALL_DIR)$(ARCHIVE_EXT) $(INSTALL_DIR)
@@ -479,7 +479,7 @@ install_dirs:
 .PHONY: install_cc
 install_cc: | install_dirs
 	$(COPY) LICENSE "$(DESTDIR)$(prefix)"
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	$(COPYREC) /E /Y include "$(DESTDIR)$(prefix)"
 	$(COPY) "$(LIB_DIR)$S$(LIB_PREFIX)ortools.$L*" "$(DESTDIR)$(prefix)$Slib"
 	$(COPYREC) /E /Y share "$(DESTDIR)$(prefix)"
@@ -525,7 +525,7 @@ cc_examples_archive: | \
 	$(COPY) ortools$Ssat$Ssamples$S*.cc $(TEMP_CC_DIR)$Sortools_examples$Sexamples$Scpp
 	$(COPY) tools$SREADME.cpp.md $(TEMP_CC_DIR)$Sortools_examples$SREADME.md
 	$(COPY) LICENSE $(TEMP_CC_DIR)$Sortools_examples
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	cd $(TEMP_CC_DIR)\ortools_examples \
  && ..\..\$(TAR) -C ..\.. -c -v \
  --exclude *svn* --exclude *roadef* --exclude *vector_packing* \
@@ -595,7 +595,6 @@ detect_cc:
 	@echo CCC = $(CCC)
 	@echo CFLAGS = $(CFLAGS)
 	@echo LDFLAGS = $(LDFLAGS)
-	@echo LINK_CMD = $(LINK_CMD)
 	@echo DEPENDENCIES_INC = $(DEPENDENCIES_INC)
 	@echo DEPENDENCIES_LNK = $(DEPENDENCIES_LNK)
 	@echo SRC_DIR = $(SRC_DIR)
@@ -608,7 +607,7 @@ detect_cc:
 	@echo OR_TOOLS_LNK = $(OR_TOOLS_LNK)
 	@echo OR_TOOLS_LDFLAGS = $(OR_TOOLS_LDFLAGS)
 	@echo OR_TOOLS_LIBS = $(OR_TOOLS_LIBS)
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@echo off & echo(
 else
 	@echo

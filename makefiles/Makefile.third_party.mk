@@ -1,7 +1,7 @@
 .PHONY: help_third_party # Generate list of Prerequisite targets with descriptions.
 help_third_party:
 	@echo Use one of the following Prerequisite targets:
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@$(GREP) "^.PHONY: .* #" $(CURDIR)/makefiles/Makefile.third_party.mk | $(SED) "s/\.PHONY: \(.*\) # \(.*\)/\1\t\2/"
 	@echo off & echo(
 else
@@ -70,7 +70,7 @@ endif
 ifdef XPRESS_ROOT
 	@echo XPRESS_ROOT = $(XPRESS_ROOT)
 endif
-ifeq ($(SYSTEM),win)
+ifeq ($(PLATFORM),WIN64)
 	@echo off & echo(
 else
 	@echo
