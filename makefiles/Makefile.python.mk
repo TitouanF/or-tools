@@ -429,7 +429,7 @@ else
 endif
 
 $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools/__init__.py: \
-	$(GEN_DIR)/ortools/__init__.py | $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools
+	| $(PYPI_ARCHIVE_TEMP_DIR)/ortools/ortools
 	$(COPY) $(GEN_PATH)$Sortools$S__init__.py $(PYPI_ARCHIVE_TEMP_DIR)$Sortools$Sortools$S__init__.py
 ifeq ($(PLATFORM),WIN64)
 	echo __version__ = "$(OR_TOOLS_PYTHON_VERSION)" >> \

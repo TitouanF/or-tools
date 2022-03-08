@@ -170,19 +170,32 @@ ifneq ($(PLATFORM),WIN64)
   -Wl,-rpath,@loader_path \
   -Wl,-rpath,@loader_path/../lib \
   -Wl,-rpath,@loader_path/../dependencies/lib
-    LDFLAGS = -install_name @rpath/$(LIB_PREFIX)ortools.$L #  endif # ($(OS),Darwin)
-
   endif # ($(OS),Darwin)
 
-  DEPENDENCIES_INC = -I$(INC_DIR) -I$(SRC_DIR) -I$(GEN_DIR) \
-  -Wno-deprecated -DUSE_GLOP -DUSE_BOP \
-  $(GLPK_INC) $(CPLEX_INC) $(XPRESS_INC)
-
-  CFLAGS = $(DEBUG) $(DEPENDENCIES_INC) -DOR_TOOLS_MAJOR=$(OR_TOOLS_MAJOR) -DOR_TOOLS_MINOR=$(OR_TOOLS_MINOR) -DOR_TOOLS_PATCH=$(GIT_REVISION)
-  LDFLAGS += $(ZLIB_LNK) $(SYS_LNK) $(LINK_FLAGS)
-  DEPENDENCIES_LNK = $(GLPK_LNK) $(CPLEX_LNK) $(XPRESS_LNK)
-  OR_TOOLS_LNK = $(PRE_LIB)ortools$(POST_LIB)
-
+  CFLAGS = \
+    $(DEBUG) \
+    -I$(INC_DIR) \
+    -I$(SRC_DIR) \
+    -I$(GEN_DIR) \
+    -Wno-deprecated \
+    -DUSE_GLOP \
+    -DUSE_BOP \
+    -DUSE_PDLP \
+    $(GLPK_INC) \
+    $(CPLEX_INC) \
+    $(XPRESS_INC) \
+    -DOR_TOOLS_MAJOR=$(OR_TOOLS_MAJOR) \
+    -DOR_TOOLS_MINOR=$(OR_TOOLS_MINOR) \
+    -DOR_TOOLS_PATCH=$(GIT_REVISION)
+  LDFLAGS = \
+    $(PRE_LIB)ortools$(POST_LIB) \
+    $(ZLIB_LNK) \
+    $(SYS_LNK) \
+    $(LINK_FLAGS) \
+    $(GLPK_LNK) \
+    $(CPLEX_LNK) \
+    $(XPRESS_LNK)
+  
   # language targets
   HAS_PYTHON ?= ON
   ifeq ($(PYTHON_VERSION),)
@@ -316,14 +329,22 @@ ifeq ("$(PLATFORM)","WIN64")
 
   SYS_LNK = psapi.lib ws2_32.lib shlwapi.lib
 
-  DEPENDENCIES_INC = /I$(INC_DIR) /I$(SRC_DIR) /I$(GEN_DIR) \
-  /DUSE_GLOP /DUSE_BOP /DUSE_PDLP $(GLPK_INC) $(CPLEX_INC) $(XPRESS_INC)
-
-  CFLAGS = $(DEBUG) $(DEPENDENCIES_INC)  /DOR_TOOLS_MAJOR=$(OR_TOOLS_MAJOR) /DOR_TOOLS_MINOR=$(OR_TOOLS_MINOR) /DOR_TOOLS_PATCH=$(GIT_REVISION)
-  LDFLAGS =
-  DEPENDENCIES_LNK += $(PRE_LIB)libprotobuf.lib $(PRE_LIB)re2.lib $(PRE_LIB)zlib.lib
+  CFLAGS = \
+    $(DEBUG) \
+    /I$(INC_DIR) \
+    /I$(SRC_DIR) \
+    /I$(GEN_DIR) \
+    /DUSE_GLOP \
+    /DUSE_BOP \
+    /DUSE_PDLP \
+    $(GLPK_INC) \
+    $(CPLEX_INC) \
+    $(XPRESS_INC) \
+    /DOR_TOOLS_MAJOR=$(OR_TOOLS_MAJOR) \
+    /DOR_TOOLS_MINOR=$(OR_TOOLS_MINOR) \
+    /DOR_TOOLS_PATCH=$(GIT_REVISION)
   ifneq ($(USE_COINOR),OFF)
-      COINOR_LNK = \
+    COINOR_LNK = \
       $(PRE_LIB)CoinUtils.lib \
       $(PRE_LIB)Osi.lib \
       $(PRE_LIB)Clp.lib \
@@ -335,82 +356,90 @@ ifeq ("$(PLATFORM)","WIN64")
       $(PRE_LIB)CbcSolver.lib
   endif
   ifneq ($(USE_SCIP),OFF)
-      SCIP_LNK = $(PRE_LIB)libscip.lib
+    SCIP_LNK = $(PRE_LIB)libscip.lib
   endif
   ABSL_LNK = \
-  $(PRE_LIB)absl_bad_any_cast_impl.lib \
-  $(PRE_LIB)absl_bad_optional_access.lib \
-  $(PRE_LIB)absl_bad_variant_access.lib \
-  $(PRE_LIB)absl_base.lib \
-  $(PRE_LIB)absl_city.lib \
-  $(PRE_LIB)absl_civil_time.lib \
-  $(PRE_LIB)absl_cord.lib \
-  $(PRE_LIB)absl_cordz_functions.lib \
-  $(PRE_LIB)absl_cordz_handle.lib \
-  $(PRE_LIB)absl_cordz_info.lib \
-  $(PRE_LIB)absl_cordz_sample_token.lib \
-  $(PRE_LIB)absl_cord_internal.lib \
-  $(PRE_LIB)absl_debugging_internal.lib \
-  $(PRE_LIB)absl_demangle_internal.lib \
-  $(PRE_LIB)absl_examine_stack.lib \
-  $(PRE_LIB)absl_exponential_biased.lib \
-  $(PRE_LIB)absl_failure_signal_handler.lib \
-  $(PRE_LIB)absl_flags.lib \
-  $(PRE_LIB)absl_flags_commandlineflag.lib \
-  $(PRE_LIB)absl_flags_commandlineflag_internal.lib \
-  $(PRE_LIB)absl_flags_config.lib \
-  $(PRE_LIB)absl_flags_internal.lib \
-  $(PRE_LIB)absl_flags_marshalling.lib \
-  $(PRE_LIB)absl_flags_parse.lib \
-  $(PRE_LIB)absl_flags_private_handle_accessor.lib \
-  $(PRE_LIB)absl_flags_program_name.lib \
-  $(PRE_LIB)absl_flags_reflection.lib \
-  $(PRE_LIB)absl_flags_usage.lib \
-  $(PRE_LIB)absl_flags_usage_internal.lib \
-  $(PRE_LIB)absl_graphcycles_internal.lib \
-  $(PRE_LIB)absl_hash.lib \
-  $(PRE_LIB)absl_hashtablez_sampler.lib \
-  $(PRE_LIB)absl_int128.lib \
-  $(PRE_LIB)absl_leak_check.lib \
-  $(PRE_LIB)absl_leak_check_disable.lib \
-  $(PRE_LIB)absl_log_severity.lib \
-  $(PRE_LIB)absl_low_level_hash.lib \
-  $(PRE_LIB)absl_malloc_internal.lib \
-  $(PRE_LIB)absl_periodic_sampler.lib \
-  $(PRE_LIB)absl_random_distributions.lib \
-  $(PRE_LIB)absl_random_internal_distribution_test_util.lib \
-  $(PRE_LIB)absl_random_internal_platform.lib \
-  $(PRE_LIB)absl_random_internal_pool_urbg.lib \
-  $(PRE_LIB)absl_random_internal_randen.lib \
-  $(PRE_LIB)absl_random_internal_randen_hwaes.lib \
-  $(PRE_LIB)absl_random_internal_randen_hwaes_impl.lib \
-  $(PRE_LIB)absl_random_internal_randen_slow.lib \
-  $(PRE_LIB)absl_random_internal_seed_material.lib \
-  $(PRE_LIB)absl_random_seed_gen_exception.lib \
-  $(PRE_LIB)absl_random_seed_sequences.lib \
-  $(PRE_LIB)absl_raw_hash_set.lib \
-  $(PRE_LIB)absl_raw_logging_internal.lib \
-  $(PRE_LIB)absl_scoped_set_env.lib \
-  $(PRE_LIB)absl_spinlock_wait.lib \
-  $(PRE_LIB)absl_stacktrace.lib \
-  $(PRE_LIB)absl_status.lib \
-  $(PRE_LIB)absl_statusor.lib \
-  $(PRE_LIB)absl_strerror.lib \
-  $(PRE_LIB)absl_strings.lib \
-  $(PRE_LIB)absl_strings_internal.lib \
-  $(PRE_LIB)absl_str_format_internal.lib \
-  $(PRE_LIB)absl_symbolize.lib \
-  $(PRE_LIB)absl_synchronization.lib \
-  $(PRE_LIB)absl_throw_delegate.lib \
-  $(PRE_LIB)absl_time.lib \
-  $(PRE_LIB)absl_time_zone.lib
+    $(PRE_LIB)absl_bad_any_cast_impl.lib \
+    $(PRE_LIB)absl_bad_optional_access.lib \
+    $(PRE_LIB)absl_bad_variant_access.lib \
+    $(PRE_LIB)absl_base.lib \
+    $(PRE_LIB)absl_city.lib \
+    $(PRE_LIB)absl_civil_time.lib \
+    $(PRE_LIB)absl_cord.lib \
+    $(PRE_LIB)absl_cordz_functions.lib \
+    $(PRE_LIB)absl_cordz_handle.lib \
+    $(PRE_LIB)absl_cordz_info.lib \
+    $(PRE_LIB)absl_cordz_sample_token.lib \
+    $(PRE_LIB)absl_cord_internal.lib \
+    $(PRE_LIB)absl_debugging_internal.lib \
+    $(PRE_LIB)absl_demangle_internal.lib \
+    $(PRE_LIB)absl_examine_stack.lib \
+    $(PRE_LIB)absl_exponential_biased.lib \
+    $(PRE_LIB)absl_failure_signal_handler.lib \
+    $(PRE_LIB)absl_flags.lib \
+    $(PRE_LIB)absl_flags_commandlineflag.lib \
+    $(PRE_LIB)absl_flags_commandlineflag_internal.lib \
+    $(PRE_LIB)absl_flags_config.lib \
+    $(PRE_LIB)absl_flags_internal.lib \
+    $(PRE_LIB)absl_flags_marshalling.lib \
+    $(PRE_LIB)absl_flags_parse.lib \
+    $(PRE_LIB)absl_flags_private_handle_accessor.lib \
+    $(PRE_LIB)absl_flags_program_name.lib \
+    $(PRE_LIB)absl_flags_reflection.lib \
+    $(PRE_LIB)absl_flags_usage.lib \
+    $(PRE_LIB)absl_flags_usage_internal.lib \
+    $(PRE_LIB)absl_graphcycles_internal.lib \
+    $(PRE_LIB)absl_hash.lib \
+    $(PRE_LIB)absl_hashtablez_sampler.lib \
+    $(PRE_LIB)absl_int128.lib \
+    $(PRE_LIB)absl_leak_check.lib \
+    $(PRE_LIB)absl_leak_check_disable.lib \
+    $(PRE_LIB)absl_log_severity.lib \
+    $(PRE_LIB)absl_low_level_hash.lib \
+    $(PRE_LIB)absl_malloc_internal.lib \
+    $(PRE_LIB)absl_periodic_sampler.lib \
+    $(PRE_LIB)absl_random_distributions.lib \
+    $(PRE_LIB)absl_random_internal_distribution_test_util.lib \
+    $(PRE_LIB)absl_random_internal_platform.lib \
+    $(PRE_LIB)absl_random_internal_pool_urbg.lib \
+    $(PRE_LIB)absl_random_internal_randen.lib \
+    $(PRE_LIB)absl_random_internal_randen_hwaes.lib \
+    $(PRE_LIB)absl_random_internal_randen_hwaes_impl.lib \
+    $(PRE_LIB)absl_random_internal_randen_slow.lib \
+    $(PRE_LIB)absl_random_internal_seed_material.lib \
+    $(PRE_LIB)absl_random_seed_gen_exception.lib \
+    $(PRE_LIB)absl_random_seed_sequences.lib \
+    $(PRE_LIB)absl_raw_hash_set.lib \
+    $(PRE_LIB)absl_raw_logging_internal.lib \
+    $(PRE_LIB)absl_scoped_set_env.lib \
+    $(PRE_LIB)absl_spinlock_wait.lib \
+    $(PRE_LIB)absl_stacktrace.lib \
+    $(PRE_LIB)absl_status.lib \
+    $(PRE_LIB)absl_statusor.lib \
+    $(PRE_LIB)absl_strerror.lib \
+    $(PRE_LIB)absl_strings.lib \
+    $(PRE_LIB)absl_strings_internal.lib \
+    $(PRE_LIB)absl_str_format_internal.lib \
+    $(PRE_LIB)absl_symbolize.lib \
+    $(PRE_LIB)absl_synchronization.lib \
+    $(PRE_LIB)absl_throw_delegate.lib \
+    $(PRE_LIB)absl_time.lib \
+    $(PRE_LIB)absl_time_zone.lib
 
-  DEPENDENCIES_LNK += $(ABSL_LNK) $(COINOR_LNK) $(SCIP_LNK) $(SYS_LNK) $(GLPK_LNK) $(CPLEX_LNK) $(XPRESS_LNK)
-
-  OR_TOOLS_LNK = $(PRE_LIB)ortools$(POST_LIB) $(DEPENDENCIES_LNK)
+  LDFLAGS = \
+    $(PRE_LIB)ortools$(POST_LIB) \
+    $(PRE_LIB)libprotobuf.lib \
+    $(PRE_LIB)re2.lib \
+    $(PRE_LIB)zlib.lib \
+    $(ABSL_LNK) \
+    $(COINOR_LNK) \
+    $(SCIP_LNK) \
+    $(SYS_LNK) \
+    $(GLPK_LNK) \
+    $(CPLEX_LNK) \
+    $(XPRESS_LNK)
 
   # language targets
-
   HAS_PYTHON ?= ON
   ifeq ($(PYTHON_VERSION),)
   HAS_PYTHON = OFF
